@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+  rcmd-dev:
+    image: golang:1.16.1
+    hostname: rcmd-dev
+    container_name: rcmd-dev
+    volumes:
+      - "../:/home/rcmd:rw"
+      - "$HOME/.kube:/root/.kube:r"
+    working_dir: "/home/rcmd"
+    network_mode: "host"
+    command: /bin/sh -c "while :; do sleep 10; done"
