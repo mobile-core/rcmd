@@ -86,8 +86,8 @@ func DisplayPodList(pods *v1.PodList) {
 		|   1 | f5gc      | f5gc-mongodb-0           |                | 1/1   | 0        |         | 10.1.0.15 |
 		|     |           |                          | mongodb        |       | 0        | Running |           |
 		|   2 | f5gc      | f5gc-ue-7789f69d66-dkmm9 |                | 2/2   | 0        |         | 10.1.0.15 |
-		|     |           |                          | f5gc-ue        | 10/10 | 0        | Running |           |
-		|     |           |                          | tcpdump        |       | 0        | Running |           |
+		|     |           |                          | f5gc-ue        | 1/1   | 0        | Running |           |
+		|     |           |                          | tcpdump        | 1/1   | 0        | Running |           |
 		+-----+-----------+--------------------------+----------------+-------+----------+---------+-----------+
 	*/
 
@@ -100,13 +100,18 @@ func DisplayPodList(pods *v1.PodList) {
 		podNamePading   := padingSet("APP NAME", len(pod.GetName()), padingLen["podName"])
 		statusPading    := padingSet("STATUS", len(pod.Status.Phase), padingLen["status"])
 		podsIpPading    := padingSet("PODS IP", len(pod.Status.PodIP), padingLen["podsip"])
-
+		
 		for j, container := range pod.Spec.Containers {
 			containerNamePading := padingSet("CONTAINER NAME", len(container.Name), padingLen["containerName"])
 
-			readyCount := 0
+			var (
+				readyCount = 0
+				restartCount = 0
+			)
+
 			for _, v := range pod.Status.ContainerStatuses {
 				readyCount += readyCounter(v.Ready)
+				restartCount = restartCount + int(v.RestartCount)
 			}
 
 			if j == 0 {
@@ -115,7 +120,7 @@ func DisplayPodList(pods *v1.PodList) {
 				fmt.Printf("| %s%s ", pod.GetName(),      strings.Repeat(" ", podNamePading)) // APP NAME
 				fmt.Printf("| %s ", strings.Repeat(" ", len(container.Name) + containerNamePading)) // CONTAINER NAME
 				fmt.Printf("| %2d/%-2d ", readyCount, len(pod.Status.ContainerStatuses)) // READY
-				fmt.Printf("| %s ", strings.Repeat(" ", 8)) // RESTARTS
+				fmt.Printf("| %-8d ", restartCount) // RESTARTS
 				fmt.Printf("| %s%s ", pod.Status.Phase,   strings.Repeat(" ", statusPading)) // STATUS
 				fmt.Printf("| %s%s ", pod.Status.PodIP, strings.Repeat(" ", podsIpPading)) // PODS IP
 				fmt.Printf("|\n")	
@@ -126,7 +131,7 @@ func DisplayPodList(pods *v1.PodList) {
 			fmt.Printf("| %s ", strings.Repeat(" ", len(pod.GetName()) + podNamePading)) // APP NAME
 			fmt.Printf("| %s%s ", container.Name, strings.Repeat(" ", containerNamePading)) // CONTAINER NAME
 			fmt.Printf("| %2d/%-2d ", readyCounter(pod.Status.ContainerStatuses[j].Ready), 1) // READY
-			fmt.Printf("| %s ", strings.Repeat(" ", 8)) // RESTARTS
+			fmt.Printf("| %-8d ", pod.Status.ContainerStatuses[j].RestartCount) // RESTARTS
 			fmt.Printf("| %s ", strings.Repeat(" ", len(pod.Status.Phase) + statusPading)) // STATUS
 			fmt.Printf("| %s ", strings.Repeat(" ", len(pod.Status.PodIP) + podsIpPading)) // PODS IP
 			fmt.Printf("|\n")	
@@ -229,15 +234,15 @@ func headerPrint(padingLen map[string]int) {
 }
 
 func padingSet(name string, length int, max int) int {
-	switch (name) {
-		case "CONTAINER NAME":
-			if max > len(name) {
-				return max - length
-			}
-			return max
-	}
 	if max > len(name) {
 		return max - length
+	} else if max < len(name) {
+		return len(name) - length
+	}
+
+	switch (name) {
+		case "CONTAINER NAME":
+			return max
 	}
 	return max + 1
 }
