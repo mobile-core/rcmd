@@ -1,18 +1,19 @@
 package k8s
 
 import (
-	"os"
-	"fmt"
-	"strings"
 	"context"
+	"fmt"
+	"os"
 	"path/filepath"
+	"strings"
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
 	// corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
 	// "k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
@@ -97,15 +98,15 @@ func DisplayPodList(pods *v1.PodList) {
 
 	for i, pod := range pods.Items {
 		namespacePading := padingSet("NAMESPACE", len(pod.GetNamespace()), padingLen["namespace"])
-		podNamePading   := padingSet("APP NAME", len(pod.GetName()), padingLen["podName"])
-		statusPading    := padingSet("STATUS", len(pod.Status.Phase), padingLen["status"])
-		podsIpPading    := padingSet("PODS IP", len(pod.Status.PodIP), padingLen["podsip"])
-		
+		podNamePading := padingSet("APP NAME", len(pod.GetName()), padingLen["podName"])
+		statusPading := padingSet("STATUS", len(pod.Status.Phase), padingLen["status"])
+		podsIpPading := padingSet("PODS IP", len(pod.Status.PodIP), padingLen["podsip"])
+
 		for j, container := range pod.Spec.Containers {
 			containerNamePading := padingSet("CONTAINER NAME", len(container.Name), padingLen["containerName"])
 
 			var (
-				readyCount = 0
+				readyCount   = 0
 				restartCount = 0
 			)
 
@@ -115,26 +116,26 @@ func DisplayPodList(pods *v1.PodList) {
 			}
 
 			if j == 0 {
-				fmt.Printf("| %3d ", i+1) // No.
-				fmt.Printf("| %s%s ", pod.GetNamespace(), strings.Repeat(" ", namespacePading)) // NAMESPACE
-				fmt.Printf("| %s%s ", pod.GetName(),      strings.Repeat(" ", podNamePading)) // APP NAME
-				fmt.Printf("| %s ", strings.Repeat(" ", len(container.Name) + containerNamePading)) // CONTAINER NAME
-				fmt.Printf("| %2d/%-2d ", readyCount, len(pod.Status.ContainerStatuses)) // READY
-				fmt.Printf("| %-8d ", restartCount) // RESTARTS
-				fmt.Printf("| %s%s ", pod.Status.Phase,   strings.Repeat(" ", statusPading)) // STATUS
-				fmt.Printf("| %s%s ", pod.Status.PodIP, strings.Repeat(" ", podsIpPading)) // PODS IP
-				fmt.Printf("|\n")	
+				fmt.Printf("| %3d ", i+1)                                                         // No.
+				fmt.Printf("| %s%s ", pod.GetNamespace(), strings.Repeat(" ", namespacePading))   // NAMESPACE
+				fmt.Printf("| %s%s ", pod.GetName(), strings.Repeat(" ", podNamePading))          // APP NAME
+				fmt.Printf("| %s ", strings.Repeat(" ", len(container.Name)+containerNamePading)) // CONTAINER NAME
+				fmt.Printf("| %2d/%-2d ", readyCount, len(pod.Status.ContainerStatuses))          // READY
+				fmt.Printf("| %-8d ", restartCount)                                               // RESTARTS
+				fmt.Printf("| %s%s ", pod.Status.Phase, strings.Repeat(" ", statusPading))        // STATUS
+				fmt.Printf("| %s%s ", pod.Status.PodIP, strings.Repeat(" ", podsIpPading))        // PODS IP
+				fmt.Printf("|\n")
 			}
 
-			fmt.Printf("| %s ", strings.Repeat(" ", 3)) // No.
-			fmt.Printf("| %s ", strings.Repeat(" ", len(pod.GetNamespace()) + namespacePading)) // NAMESPACE
-			fmt.Printf("| %s ", strings.Repeat(" ", len(pod.GetName()) + podNamePading)) // APP NAME
-			fmt.Printf("| %s%s ", container.Name, strings.Repeat(" ", containerNamePading)) // CONTAINER NAME
+			fmt.Printf("| %s ", strings.Repeat(" ", 3))                                       // No.
+			fmt.Printf("| %s ", strings.Repeat(" ", len(pod.GetNamespace())+namespacePading)) // NAMESPACE
+			fmt.Printf("| %s ", strings.Repeat(" ", len(pod.GetName())+podNamePading))        // APP NAME
+			fmt.Printf("| %s%s ", container.Name, strings.Repeat(" ", containerNamePading))   // CONTAINER NAME
 			fmt.Printf("| %2d/%-2d ", readyCounter(pod.Status.ContainerStatuses[j].Ready), 1) // READY
-			fmt.Printf("| %-8d ", pod.Status.ContainerStatuses[j].RestartCount) // RESTARTS
-			fmt.Printf("| %s ", strings.Repeat(" ", len(pod.Status.Phase) + statusPading)) // STATUS
-			fmt.Printf("| %s ", strings.Repeat(" ", len(pod.Status.PodIP) + podsIpPading)) // PODS IP
-			fmt.Printf("|\n")	
+			fmt.Printf("| %-8d ", pod.Status.ContainerStatuses[j].RestartCount)               // RESTARTS
+			fmt.Printf("| %s ", strings.Repeat(" ", len(pod.Status.Phase)+statusPading))      // STATUS
+			fmt.Printf("| %s ", strings.Repeat(" ", len(pod.Status.PodIP)+podsIpPading))      // PODS IP
+			fmt.Printf("|\n")
 		}
 	}
 	framePrint(padingLen)
@@ -223,13 +224,13 @@ func headerPrint(padingLen map[string]int) {
 	}
 
 	fmt.Printf("| %3s ", "No.")
-	fmt.Printf("| %s%s ", "NAMESPACE",      strings.Repeat(" ", namespacePading))
-	fmt.Printf("| %s%s ", "APP NAME",       strings.Repeat(" ", podNamePading))
+	fmt.Printf("| %s%s ", "NAMESPACE", strings.Repeat(" ", namespacePading))
+	fmt.Printf("| %s%s ", "APP NAME", strings.Repeat(" ", podNamePading))
 	fmt.Printf("| %s%s ", "CONTAINER NAME", strings.Repeat(" ", containerNamePading))
 	fmt.Printf("| %5s ", "READY")
 	fmt.Printf("| %s ", "RESTARTS")
-	fmt.Printf("| %s%s ", "STATUS",         strings.Repeat(" ", statusPading))
-	fmt.Printf("| %s%s ", "PODS IP",        strings.Repeat(" ", podsIpPading))
+	fmt.Printf("| %s%s ", "STATUS", strings.Repeat(" ", statusPading))
+	fmt.Printf("| %s%s ", "PODS IP", strings.Repeat(" ", podsIpPading))
 	fmt.Printf("|\n")
 }
 
@@ -240,9 +241,9 @@ func padingSet(name string, length int, max int) int {
 		return len(name) - length
 	}
 
-	switch (name) {
-		case "CONTAINER NAME":
-			return max
+	switch name {
+	case "CONTAINER NAME":
+		return max
 	}
 	return max + 1
 }
