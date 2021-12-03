@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   rcmd-dev:
-    image: golang:1.16.1
+    image: golang:1.17.3
     hostname: rcmd-dev
     container_name: rcmd-dev
     volumes:
