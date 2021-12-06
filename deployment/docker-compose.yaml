@@ -7,7 +7,7 @@ services:
     container_name: rcmd-dev
     volumes:
       - "../:/home/rcmd:rw"
-      - "$HOME/.kube:/root/.kube:r"
+      - "$HOME/.kube:/root/.kube:rw"
     working_dir: "/home/rcmd"
     network_mode: "host"
     command: /bin/sh -c "while :; do sleep 10; done"
