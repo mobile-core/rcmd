@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"github.com/mobile-core/rcmd/pkg/k8s"
 	"github.com/spf13/cobra"
-	"local.packages/k8s"
 )
 
 type Params struct {

@@ -2,7 +2,6 @@ package k8s
 
 import (
 	"testing"
-	"local.packages/k8s"
 )
 
 func TestK8sMain(t *testing.T) {
@@ -12,14 +11,14 @@ func TestK8sMain(t *testing.T) {
 		want error
 	}
 
-	tests := Tests {
+	tests := Tests{
 		name: "Normal Case",
 		args: "kube-system",
 		want: nil,
 	}
 
 	t.Run(tests.name, func(t *testing.T) {
-		res := k8s.GetPodsList(tests.args)
+		res := GetPodsList(tests.args)
 		if res != tests.want {
 			t.Errorf("The result is not the expected value.: %s", res)
 		}

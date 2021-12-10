@@ -1,7 +1,7 @@
 package main
 
 import (
-	"local.packages/cmd"
+	"github.com/mobile-core/rcmd/cmd"
 )
 
 func main() {
