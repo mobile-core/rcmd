@@ -5,18 +5,16 @@ import (
 	"os/exec"
 )
 
-func single(command string, node string) error {
+func Single(command string, node string) {
 	out, err := exec.Command("ssh", node, "-i", "${HOME}/.ssh/id_rsa", command).Output()
 	if err != nil {
-		return err
+		fmt.Println(err)
 	}
 	fmt.Println(string(out))
-	return nil
 }
 
-func multiple(command string, node []string) error {
+func Multiple(command string, node []string) {
 	for _, v := range node {
-		single(command, v)
+		Single(command, v)
 	}
-	return nil
 }

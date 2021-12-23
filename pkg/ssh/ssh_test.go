@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func Test_single(t *testing.T) {
+func Test_Single(t *testing.T) {
 	type args struct {
 		command string
 		node    string
@@ -23,7 +23,7 @@ func Test_single(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "fail test1",
+			name: "invalid node name",
 			args: args{
 				command: "echo hello",
 				node:    "node3",
@@ -31,7 +31,7 @@ func Test_single(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "fail test2",
+			name: "invalid command",
 			args: args{
 				command: "hello",
 				node:    "node1",
@@ -41,14 +41,12 @@ func Test_single(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := single(tt.args.command, tt.args.node); (err != nil) != tt.wantErr {
-				t.Errorf("single() error = %v, wantErr %v", err, tt.wantErr)
-			}
+			Single(tt.args.command, tt.args.node)
 		})
 	}
 }
 
-func Test_multiple(t *testing.T) {
+func Test_Multiple(t *testing.T) {
 	type args struct {
 		command string
 		node    []string
@@ -67,23 +65,15 @@ func Test_multiple(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "fail test1",
+			name: "invalid node name",
 			args: args{
 				command: "echo hello",
-				node:    []string{"aaa", "node1"},
+				node:    []string{"node1", "node3"},
 			},
 			wantErr: true,
 		},
 		{
-			name: "fail test2",
-			args: args{
-				command: "echo hello",
-				node:    []string{"aaa", "bbb"},
-			},
-			wantErr: true,
-		},
-		{
-			name: "fail test3",
+			name: "invalid command",
 			args: args{
 				command: "hello",
 				node:    []string{"master", "node1"},
@@ -93,9 +83,7 @@ func Test_multiple(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := multiple(tt.args.command, tt.args.node); (err != nil) != tt.wantErr {
-				t.Errorf("multiple() error = %v, wantErr %v", err, tt.wantErr)
-			}
+			Multiple(tt.args.command, tt.args.node)
 		})
 	}
 }
