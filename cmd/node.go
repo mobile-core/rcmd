@@ -1,56 +1,35 @@
 package cmd
 
 import (
+	"errors"
+	"fmt"
+	"os"
+
+	"github.com/mobile-core/rcmd/pkg/ssh"
 	"github.com/spf13/cobra"
 )
 
-var nodeCmd = &cobra.Command{}
+var params struct {
+	command string
+	node []string
+}
 
-func init() {
-	nodeCmd.Use = "node"
-	nodeCmd.Short = "rcmd to manipulate k8s resources"
-	nodeCmd.Version = "0.1"
-
-	nodeCmd.RunE = func(cmd *cobra.Command, args []string) error {
+var nodeCmd = &cobra.Command{
+	Use:	"node [NODE]",
+	Args:  cobra.MinimumNArgs(1),
+	Short: "node command",
+	Long: "node command",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		ssh.Multiple(command strinargs, node []string)
 		if true {
 			return nodeCmd.Help()
 		}
-
+		fmt.Println(params.command)
 		return nil
-	}
+	},
+}
+
+func init() {
 	rootCmd.AddCommand(nodeCmd)
-}
-
-func init() {
-	var listCmd = &cobra.Command{}
-	listCmd.Use = "list"
-	listCmd.Short = "list command"
-	listCmd.Example = rootExample
-	listCmd.Version = "0.1"
-
-	listCmd.RunE = func(cmd *cobra.Command, args []string) error {
-		if true {
-			return listCmd.Help()
-		}
-
-		return nil
-	}
-	nodeCmd.AddCommand(listCmd)
-}
-
-func init() {
-	var cliCmd = &cobra.Command{}
-	cliCmd.Use = "cli"
-	cliCmd.Short = "cli command"
-	cliCmd.Example = rootExample
-	cliCmd.Version = "0.1"
-
-	cliCmd.RunE = func(cmd *cobra.Command, args []string) error {
-		if true {
-			return cliCmd.Help()
-		}
-
-		return nil
-	}
-	nodeCmd.AddCommand(cliCmd)
+	nodeCmd.Flags().StringVarP(&params.command, "command", "c", "echo hello", "type anything")
 }
