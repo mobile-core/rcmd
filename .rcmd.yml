@@ -1,7 +1,0 @@
-nodelist:
-        - hostname: master
-          username: vagrant
-        - hostname: node1
-          username: vagrant
-        - hostname: node2
-          username: vagrant
