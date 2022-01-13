@@ -21,11 +21,7 @@ func init() {
 	nodeCmd.Version = "0.1"
 
 	nodeCmd.RunE = func(cmd *cobra.Command, args []string) error {
-		if true {
-			return nodeCmd.Help()
-		}
-
-		return nil
+		return nodeCmd.Help()
 	}
 	rootCmd.AddCommand(nodeCmd)
 }
