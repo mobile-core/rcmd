@@ -1,49 +1,71 @@
 package ssh
 
 import (
+	"github.com/kevinburke/ssh_config"
 	"github.com/mobile-core/rcmd/pkg/log"
 	"golang.org/x/crypto/ssh"
 )
 
-func SshStruct(host []string) SshMethod {
-	return nodeStruct()
+func SshStruct(branch int) SshMethod {
+	if branch == 2 {
+		return connectActorStruct()
+	}
+	return execActorStruct()
 }
 
-func (s *sshConfig) Set(
+func (b *baseActor) Set(
 	host []string,
 	port []string,
 	user []string,
 	password []string,
+	publicKey []string,
 	command string,
 ) {
-	s.host = host
-	s.port = port
-	s.user = user
-	s.password = password
-	s.command = command
+	b.host = host
+	b.port = port
+	b.user = user
+	b.password = password
+	b.publicKey = publicKey
+	b.command = command
 }
 
 // Authentication returns configuration for authentication of ssh sessions.
-func (s *sshConfig) Authentication() ([]*ssh.ClientConfig, error) {
+func (b *baseActor) Authentication() ([]*ssh.ClientConfig, error) {
 	var (
 		clientConfig []*ssh.ClientConfig
-		user         = s.user[0]
-		password     = s.password[0]
+		host         = b.host[0]
+		user         = b.user[0]
+		publicKey    = b.publicKey[0]
+		password     = b.password[0]
 	)
 
-	cfg, err := sshPasswordAuthentication(user, password)
-	if err != nil {
-		return clientConfig, err
+	if publicKey != "" {
+		if user == "" {
+			user = ssh_config.Get(host, "User")
+		}
+		cfg, err := sshPublicKeyAuthentication(user, publicKey, password)
+		if err != nil {
+			return clientConfig, err
+		}
+		clientConfig = append(clientConfig, cfg)
+	} else {
+		if user == "" {
+			user = ssh_config.Get(host, "User")
+		}
+		cfg, err := sshPasswordAuthentication(user, password)
+		if err != nil {
+			return clientConfig, err
+		}
+		clientConfig = append(clientConfig, cfg)
 	}
-	clientConfig = append(clientConfig, cfg)
 	return clientConfig, nil
 }
 
 // Connect creates SSH sessions.
-func (s *sshConfig) Connect(sshConfig []*ssh.ClientConfig) ([]*ssh.Session, error) {
+func (b *baseActor) Connect(sshConfig []*ssh.ClientConfig) ([]*ssh.Session, error) {
 	var (
-		host = s.host[0]
-		port = s.port[0]
+		host = b.host[0]
+		port = b.port[0]
 		cfg  = sshConfig[0]
 	)
 
@@ -57,18 +79,18 @@ func (s *sshConfig) Connect(sshConfig []*ssh.ClientConfig) ([]*ssh.Session, erro
 }
 
 // Run starts remote shell sessions interactively or non-interactively, and enter the command to hosts.
-func (s *sshConfig) Run(sessions []*ssh.Session) error {
-	var host = s.host[0]
+func (b *baseActor) Run(sessions []*ssh.Session) error {
+	var host = b.host[0]
 	loggerFactory := log.NewLoggerFactory()
 
 	for _, session := range sessions {
-		if s.command == "" {
+		if b.command == "" {
 			if err := interactiveShellCalling(session); err != nil {
 				return err
 			}
 		} else {
 			logger := loggerFactory.NewLogger(host)
-			nonInteractiveShellCalling(session, s.command, logger)
+			nonInteractiveShellCalling(session, b.command, logger)
 		}
 	}
 	return nil
