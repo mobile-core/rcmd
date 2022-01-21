@@ -3,29 +3,26 @@ package cfg
 import (
 	"os"
 
+	"github.com/mobile-core/rcmd/pkg/fileutil"
 	"gopkg.in/yaml.v2"
 )
 
 // getFileName gets the configuration file name.
 func getFileName() string {
 	const configFileName string = ".rcmd.yml"
-	homeDir := GetHomedir()
-	separate := GetSeparate()
+	homeDir := fileutil.GetHomedir()
+	separate := fileutil.GetSeparate()
 	fileName := homeDir + separate + configFileName
 	return fileName
 }
 
 // configLoad loads the configuration file.
-func configLoad(fileName string) node {
+func configLoad(fileName string) (node, error) {
 	node := &node{}
-	b, err := os.ReadFile(fileName)
-	if err != nil {
-		panic(err.Error())
-	}
+	b, _ := os.ReadFile(fileName)
 
-	err = yaml.Unmarshal(b, &node)
-	if err != nil {
-		panic(err.Error())
+	if err := yaml.Unmarshal(b, &node); err != nil {
+		return *node, err
 	}
-	return *node
+	return *node, nil
 }

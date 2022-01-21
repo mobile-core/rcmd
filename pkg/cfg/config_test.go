@@ -31,23 +31,29 @@ func Test_configLoad(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want []nodes
+		want node
 	}{
 		{
 			name: "Normal Test",
 			args: args{
 				fileName: "/home/vagrant/.rcmd.yml",
 			},
-			want: []nodes{
-				{HostName: "master", UserName: "vagrant", Address: "172.16.33.11"},
-				{HostName: "node1", UserName: "vagrant", Address: "172.16.33.12"},
-				{HostName: "node2", UserName: "vagrant", Address: "172.16.33.13"},
+			want: node{
+				[]nodes{
+					{HostName: "master", UserName: "vagrant", Address: "172.16.33.11"},
+					{HostName: "node1", UserName: "vagrant", Address: "172.16.33.12"},
+					{HostName: "node2", UserName: "vagrant", Address: "172.16.33.13"},
+				},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := configLoad(tt.args.fileName); !reflect.DeepEqual(got, tt.want) {
+			got, err := configLoad(tt.args.fileName)
+			if err != nil {
+				t.Errorf("configLoad() = Error %v", err)
+			}
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("configLoad() = %v, want %v", got, tt.want)
 			}
 		})

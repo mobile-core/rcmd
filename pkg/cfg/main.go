@@ -1,6 +1,11 @@
 package cfg
 
-func Load() node {
+func Load() (node, error) {
 	fileName := getFileName()
-	return configLoad(fileName)
+	cfg, err := configLoad(fileName)
+
+	if err != nil {
+		return cfg, err
+	}
+	return cfg, nil
 }
