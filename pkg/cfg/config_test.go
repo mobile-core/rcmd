@@ -40,9 +40,9 @@ func Test_configLoad(t *testing.T) {
 			},
 			want: node{
 				[]nodes{
-					{HostName: "master", UserName: "vagrant", Address: "172.16.33.11"},
-					{HostName: "node1", UserName: "vagrant", Address: "172.16.33.12"},
-					{HostName: "node2", UserName: "vagrant", Address: "172.16.33.13"},
+					{Name: "master", User: "vagrant", Address: "172.16.33.11"},
+					{Name: "node1", User: "vagrant", Address: "172.16.33.12"},
+					{Name: "node2", User: "vagrant", Address: "172.16.33.13"},
 				},
 			},
 		},

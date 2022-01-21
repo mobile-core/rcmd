@@ -5,7 +5,7 @@ type node struct {
 }
 
 type nodes struct {
-	HostName string `yaml:"hostname"`
-	UserName string `yaml:"username"`
-	Address  string `yaml:"address"`
+	Name    string `yaml:"name"`
+	User    string `yaml:"user"`
+	Address string `yaml:"address"`
 }
