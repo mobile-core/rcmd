@@ -40,9 +40,9 @@ func Test_configLoad(t *testing.T) {
 			},
 			want: node{
 				[]nodes{
-					{Name: "master", User: "vagrant", Address: "172.16.33.11"},
-					{Name: "node1", User: "vagrant", Address: "172.16.33.12"},
-					{Name: "node2", User: "vagrant", Address: "172.16.33.13"},
+					{Name: "master", User: "vagrant", Address: "172.16.33.11", IdentityFile: "/home/vagrant/.ssh/id_rsa", Port: "22"},
+					{Name: "node1", User: "vagrant", Address: "172.16.33.12", IdentityFile: "/home/vagrant/.ssh/id_rsa", Port: "22"},
+					{Name: "node2", User: "vagrant", Address: "172.16.33.13", IdentityFile: "/home/vagrant/.ssh/id_rsa", Port: "22"},
 				},
 			},
 		},
