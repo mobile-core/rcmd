@@ -5,6 +5,7 @@ go 1.16
 replace (
 	github.com/mobile-core/rcmd/cmd => ./cmd
 	github.com/mobile-core/rcmd/pkg/cfg => ./pkg/cfg
+	github.com/mobile-core/rcmd/pkg/fileutil => ./pkg/fileutil
 	github.com/mobile-core/rcmd/pkg/k8s => ./pkg/k8s
 	github.com/mobile-core/rcmd/pkg/log => ./pkg/log
 	github.com/mobile-core/rcmd/pkg/ssh => ./pkg/ssh
