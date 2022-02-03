@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/mobile-core/rcmd/pkg/cfg"
 	"github.com/mobile-core/rcmd/pkg/ssh"
 	"github.com/spf13/cobra"
 )
@@ -53,29 +54,16 @@ func init() {
 			return execCmd.Help()
 		}
 
-		add := func(array []string, inStr string) []string {
-			if len(array) == 0 {
-				array = append(array, inStr)
-			}
-			return array
-		}
-
-		addDiff := func(array, comparison []string, inStr string) []string {
-			if len(array) == len(comparison) {
-				return array
-			}
-
-			for i := len(array); i < len(comparison); i++ {
-				array = append(array, inStr)
-			}
-			return array
-		}
+		defaultUser, defaultIdentityKey := setDefaultVars(params.host)
 
 		params.host = add(params.host, "")
 		params.port = addDiff(params.port, params.host, "22")
-		params.user = add(params.user, "")
-		params.password = add(params.password, "")
-		params.publicKey = addDiff(params.publicKey, params.host, "")
+		params.password = addDiff(params.password, params.host, "")
+
+		for i := 0; i < len(params.host); i++ {
+			params.user = addDiff(params.user, params.host, defaultUser[i])
+			params.publicKey = addDiff(params.publicKey, params.host, defaultIdentityKey[i])
+		}
 
 		branch = 1
 		actor := ssh.SshStruct(branch)
@@ -135,29 +123,13 @@ func init() {
 			return connectCmd.Help()
 		}
 
-		add := func(array []string, inStr string) []string {
-			if len(array) == 0 {
-				array = append(array, inStr)
-			}
-			return array
-		}
-
-		addDiff := func(array, comparison []string, inStr string) []string {
-			if len(array) == len(comparison) {
-				return array
-			}
-
-			for i := len(array); i < len(comparison); i++ {
-				array = append(array, inStr)
-			}
-			return array
-		}
+		defaultUser, defaultIdentityKey := setDefaultVars(params.host)
 
 		params.host = add(params.host, "")
 		params.port = addDiff(params.port, params.host, "22")
-		params.user = add(params.user, "")
-		params.password = add(params.password, "")
-		params.publicKey = addDiff(params.publicKey, params.host, "")
+		params.user = addDiff(params.user, params.host, defaultUser[0])
+		params.password = addDiff(params.password, params.host, "")
+		params.publicKey = addDiff(params.publicKey, params.host, defaultIdentityKey[0])
 
 		branch = 2
 		actor := ssh.SshStruct(branch)
@@ -190,4 +162,46 @@ func init() {
 		return nil
 	}
 	nodeCmd.AddCommand(connectCmd)
+}
+
+func add(array []string, inStr string) []string {
+	if len(array) == 0 {
+		array = append(array, inStr)
+	}
+	return array
+}
+
+func addDiff(array, comparison []string, inStr string) []string {
+	if len(array) == len(comparison) {
+		return array
+	}
+
+	for i := len(array); i < len(comparison); i++ {
+		array = append(array, inStr)
+	}
+	return array
+}
+
+func setDefaultVars(host []string) ([]string, []string) {
+	var (
+		defaultUser        []string
+		defaultIdentityKey []string
+	)
+
+	yaml, _ := cfg.Load()
+
+	for i := 0; i < len(host); i++ {
+		for j := 0; j < len(yaml.Nodes); j++ {
+			if host[i] == yaml.Nodes[j].Name {
+
+				user := yaml.Nodes[j].User
+				identityKey := yaml.Nodes[j].IdentityFile
+
+				defaultUser = append(defaultUser, user)
+				defaultIdentityKey = append(defaultIdentityKey, identityKey)
+				break
+			}
+		}
+	}
+	return defaultUser, defaultIdentityKey
 }
