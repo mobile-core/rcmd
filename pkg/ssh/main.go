@@ -1,7 +1,6 @@
 package ssh
 
 import (
-	"github.com/kevinburke/ssh_config"
 	"github.com/mobile-core/rcmd/pkg/log"
 	"golang.org/x/crypto/ssh"
 )
@@ -33,25 +32,18 @@ func (b *baseActor) Set(
 func (b *baseActor) Authentication() ([]*ssh.ClientConfig, error) {
 	var (
 		clientConfig []*ssh.ClientConfig
-		host         = b.host[0]
 		user         = b.user[0]
 		publicKey    = b.publicKey[0]
 		password     = b.password[0]
 	)
 
 	if publicKey != "" {
-		if user == "" {
-			user = ssh_config.Get(host, "User")
-		}
 		cfg, err := sshPublicKeyAuthentication(user, publicKey, password)
 		if err != nil {
 			return clientConfig, err
 		}
 		clientConfig = append(clientConfig, cfg)
 	} else {
-		if user == "" {
-			user = ssh_config.Get(host, "User")
-		}
 		cfg, err := sshPasswordAuthentication(user, password)
 		if err != nil {
 			return clientConfig, err
