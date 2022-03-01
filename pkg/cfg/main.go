@@ -1,6 +1,6 @@
 package cfg
 
-func Load() (node, error) {
+func Load() (nodes, error) {
 	fileName := getFileName()
 	cfg, err := configLoad(fileName)
 

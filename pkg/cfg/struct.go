@@ -1,10 +1,10 @@
 package cfg
 
-type node struct {
-	Nodes []nodes `yaml:"node"`
+type nodes struct {
+	Node []node `yaml:"node"`
 }
 
-type nodes struct {
+type node struct {
 	Name         string `yaml:"name"`
 	User         string `yaml:"user"`
 	Address      string `yaml:"address"`

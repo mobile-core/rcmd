@@ -31,15 +31,15 @@ func Test_configLoad(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want node
+		want nodes
 	}{
 		{
 			name: "Normal Test",
 			args: args{
 				fileName: "/home/vagrant/.rcmd.yml",
 			},
-			want: node{
-				[]nodes{
+			want: nodes{
+				[]node{
 					{Name: "master", User: "vagrant", Address: "172.16.33.11", IdentityFile: "/home/vagrant/.ssh/id_rsa", Port: "22"},
 					{Name: "node1", User: "vagrant", Address: "172.16.33.12", IdentityFile: "/home/vagrant/.ssh/id_rsa", Port: "22"},
 					{Name: "node2", User: "vagrant", Address: "172.16.33.13", IdentityFile: "/home/vagrant/.ssh/id_rsa", Port: "22"},

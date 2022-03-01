@@ -17,8 +17,8 @@ func getFileName() string {
 }
 
 // configLoad loads the configuration file.
-func configLoad(fileName string) (node, error) {
-	node := &node{}
+func configLoad(fileName string) (nodes, error) {
+	node := &nodes{}
 	b, _ := os.ReadFile(fileName)
 
 	if err := yaml.Unmarshal(b, &node); err != nil {
