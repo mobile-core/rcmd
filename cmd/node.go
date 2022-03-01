@@ -191,11 +191,11 @@ func setDefaultVars(host []string) ([]string, []string) {
 	yaml, _ := cfg.Load()
 
 	for i := 0; i < len(host); i++ {
-		for j := 0; j < len(yaml.Nodes); j++ {
-			if host[i] == yaml.Nodes[j].Name {
+		for j := 0; j < len(yaml.Node); j++ {
+			if host[i] == yaml.Node[j].Name {
 
-				user := yaml.Nodes[j].User
-				identityKey := yaml.Nodes[j].IdentityFile
+				user := yaml.Node[j].User
+				identityKey := yaml.Node[j].IdentityFile
 
 				defaultUser = append(defaultUser, user)
 				defaultIdentityKey = append(defaultIdentityKey, identityKey)
